@@ -1,61 +1,63 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
-import api from "../api";
-import { ToggleScreenMode } from "../components/ToggleScreenMode";
-import { LogoutButton } from "../components/LogoutButton";
+import { useState, useEffect } from "react"
+import api from "../api"
+import { ToggleScreenMode } from "../components/ToggleScreenMode"
+import { LogoutButton } from "../components/LogoutButton"
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
-  const [notes, setNotes] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [editedTitle, setEditedTitle] = useState("");
-  const [editedContent, setEditedContent] = useState("");
-  const [newTitle, setNewTitle] = useState("");
-  const [newContent, setNewContent] = useState("");
+  const [notes, setNotes] = useState([])
+  const [editId, setEditId] = useState(null)
+  const [editedTitle, setEditedTitle] = useState("")
+  const [editedContent, setEditedContent] = useState("")
+  const [newTitle, setNewTitle] = useState("")
+  const [newContent, setNewContent] = useState("")
+  const navigate = useNavigate()
 
   useEffect(() => {
-    getNotes();
-  }, []);
+    getNotes()
+  }, [])
 
   const getNotes = () => {
     api
       .get("/api/notes/")
       .then((res) => res.data)
       .then((data) => {
-        setNotes(data);
+        setNotes(data)
       })
-      .catch((err) => alert(err));
-  };
+      .catch((err) => alert(err))
+  }
 
   const deleteNote = (id) => {
     api
       .delete(`/api/notes/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Note deleted");
-        else alert("Failed to delete note");
-        getNotes();
+        if (res.status === 204) alert("Note deleted")
+        else alert("Failed to delete note")
+        getNotes()
       })
-      .catch((err) => alert(err));
-  };
+      .catch((err) => alert(err))
+  }
 
   const createNote = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     api
       .post("/api/notes/", { content: newContent, title: newTitle })
       .then((res) => {
-        if (res.status === 201) alert("Note created");
-        else alert("Failed to make note");
-        getNotes();
-        setNewTitle("");
-        setNewContent("");
+        if (res.status === 201) alert("Note created")
+        else alert("Failed to make note")
+        getNotes()
+        setNewTitle("")
+        setNewContent("")
       })
-      .catch((err) => alert(err));
-  };
+      .catch((err) => alert(err))
+  }
 
   const startEditNote = (note) => {
-    setEditId(note.id);
-    setEditedTitle(note.title);
-    setEditedContent(note.content);
-  };
+    setEditId(note.id)
+    setEditedTitle(note.title)
+    setEditedContent(note.content)
+  }
 
   const applyEditNote = (id) => {
     api
@@ -64,21 +66,24 @@ const Home = () => {
         content: editedContent,
       })
       .then((res) => {
-        if (res.status === 200) alert("Note updated");
-        else alert("Failed to update note");
-        getNotes();
-        setEditId(null);
+        if (res.status === 200) alert("Note updated")
+        else alert("Failed to update note")
+        getNotes()
+        setEditId(null)
       })
-      .catch((err) => alert(err));
-  };
+      .catch((err) => alert(err))
+  }
 
   const cancelEdit = () => {
-    setEditId(null);
-  };
+    setEditId(null)
+  }
 
   return (
     <div className="max-w-screen-xl mx-auto py-5 px-5">
       <section className="max-w-screen-xl flex flex-row justify-end gap-5">
+        <button className='border border-yellow-300 bg-yellow-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-yellow-500 transition-all duration-300' onClick={() => navigate("/expenses")}>
+          Add expenses
+        </button>
         <ToggleScreenMode />
         <LogoutButton />
       </section>
@@ -201,7 +206,7 @@ const Home = () => {
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
