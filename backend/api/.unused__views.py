@@ -1,8 +1,7 @@
-from django.contrib.auth.models import User
 from rest_framework import generics
 from .serializers import CustomUserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note, CustomUser
+from .models import Note
 from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()

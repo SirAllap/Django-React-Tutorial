@@ -66,8 +66,32 @@ class Note(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notes",
+        null=True,
     )
 
     def __str__(self):
         return self.title
+
+
+# =======================
+# Expenses Model
+# =======================
+
+
+class Expense(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="expenses",
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.content
