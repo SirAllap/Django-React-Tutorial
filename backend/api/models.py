@@ -18,6 +18,8 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Email must be provided")
         if not username:
             raise ValueError("Username must be provided")
+        if not password:
+            raise ValueError("Password must be provided")  # Optional addition
 
         user = self.model(
             username=username,

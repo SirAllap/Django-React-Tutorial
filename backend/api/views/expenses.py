@@ -1,7 +1,7 @@
 from rest_framework import generics
 from ..serializers import ExpenseSerializer
-from ..models import Expense
 from rest_framework.permissions import IsAuthenticated
+from ..models import Expense
 
 
 class ExpenseListCreate(generics.ListCreateAPIView):
@@ -14,3 +14,21 @@ class ExpenseListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class ExpenseDelete(generics.DestroyAPIView):
+    serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Expense.objects.filter(author=user)
+
+
+class ExpenseUpdate(generics.UpdateAPIView):
+    serializer_class = ExpenseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Expense.objects.filter(author=user)

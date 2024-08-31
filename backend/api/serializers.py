@@ -6,9 +6,25 @@ CustomUser = get_user_model()
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8, required=True)
+
     class Meta:
         model = CustomUser
-        fields = ("id", "email", "username")  # Adjust fields as needed
+        fields = (
+            "id",
+            "email",
+            "username",
+            "password",
+        )  # Add password field for creation
+
+    def create(self, validated_data):
+        # Hash the password and create the user
+        user = CustomUser(
+            email=validated_data["email"], username=validated_data["username"]
+        )
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
 
 
 class NoteSerializer(serializers.ModelSerializer):
