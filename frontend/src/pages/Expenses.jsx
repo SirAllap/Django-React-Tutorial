@@ -24,7 +24,7 @@ const Expenses = () => {
       .then((data) => {
         setExpenses(data);
       })
-      .catch((err) => alert(err));
+      .catch((err) => console.log(err));
   };
 
   const handleSubmit = (e) => {
@@ -32,24 +32,24 @@ const Expenses = () => {
     api
       .post("/api/expenses/", { amount: newAmount, content: newContent })
       .then((res) => {
-        if (res.status === 201) alert("Expense created");
-        else alert("Failed to create expense");
+        if (res.status === 201) console.log("Expense created");
+        else console.log("Failed to create expense");
         getExpenses();
         setNewAmount("");
         setNewContent("");
       })
-      .catch((err) => alert(err));
+      .catch((err) => console.log(err));
   };
 
   const deleteExpense = (id) => {
     api
       .delete(`/api/expenses/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Expenses deleted");
-        else alert("Failed to delete expense");
+        if (res.status === 204) console.log("Expenses deleted");
+        else console.log("Failed to delete expense");
         getExpenses();
       })
-      .catch((err) => alert(err));
+      .catch((err) => console.log(err));
   };
 
   const startEditExpense = (expense) => {
@@ -65,12 +65,12 @@ const Expenses = () => {
         content: editedContent,
       })
       .then((res) => {
-        if (res.status === 200) alert("Expense updated");
-        else alert("Failed to update expense");
+        if (res.status === 200) console.log("Expense updated");
+        else console.log("Failed to update expense");
         getExpenses();
         setEditId(null);
       })
-      .catch((err) => alert(err));
+      .catch((err) => console.log(err));
   };
 
   const cancelEdit = () => {
@@ -98,8 +98,8 @@ const Expenses = () => {
       >
         <label htmlFor="amount">Amount:</label>
         <input
-          className="py-2 px-2 border border-indigo-300 bg-indigo-100 rounded-md dark:text-gray-800"
-          type="text"
+          className="py-2 px-2 border border-indigo-300 bg-transparent rounded-md dark:text-white"
+          type="number"
           id="amount"
           name="amount"
           required
@@ -109,7 +109,7 @@ const Expenses = () => {
 
         <label htmlFor="content">Content:</label>
         <textarea
-          className="py-2 px-2 border border-indigo-300 bg-indigo-100 rounded-md dark:text-gray-800"
+          className="py-2 px-2 border border-indigo-300 bg-transparent rounded-md dark:text-white"
           id="content"
           name="content"
           required
@@ -125,7 +125,7 @@ const Expenses = () => {
       </form>
 
       <hr className="my-5" />
-      <div className="flex flex-col gap-10 max-w-screen-sm mx-auto">
+      <div className="flex flex-col gap-10 max-w-screen-sm mx-auto max-h-[900px] overflow-auto py-2 px-3">
         {expenses.map((expense) => (
           <div
             key={expense.id}
