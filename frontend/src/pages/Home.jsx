@@ -7,15 +7,19 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [notes, setNotes] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedContent, setEditedContent] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [attachId, setAttachId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     getNotes();
+    getExpenses();
   }, []);
 
   const getNotes = () => {
@@ -24,6 +28,16 @@ const Home = () => {
       .then((res) => res.data)
       .then((data) => {
         setNotes(data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const getExpenses = () => {
+    api
+      .get("/api/expenses/")
+      .then((res) => res.data)
+      .then((data) => {
+        setExpenses(data);
       })
       .catch((err) => console.log(err));
   };
@@ -42,13 +56,18 @@ const Home = () => {
   const createNote = (e) => {
     e.preventDefault();
     api
-      .post("/api/notes/", { content: newContent, title: newTitle })
+      .post("/api/notes/", {
+        content: newContent,
+        title: newTitle,
+        expense: selectedExpense,
+      })
       .then((res) => {
         if (res.status === 201) console.log("Note created");
         else console.log("Failed to make note");
         getNotes();
         setNewTitle("");
         setNewContent("");
+        setSelectedExpense(null);
       })
       .catch((err) => console.log(err));
   };
@@ -59,17 +78,27 @@ const Home = () => {
     setEditedContent(note.content);
   };
 
+  const startAttachExpense = (note) => {
+    setAttachId(note.id);
+  };
+
   const applyEditNote = (id) => {
     api
       .put(`/api/notes/update/${id}/`, {
         title: editedTitle,
         content: editedContent,
+        expense: selectedExpense,
       })
       .then((res) => {
+        console.log(res.data);
         if (res.status === 200) console.log("Note updated");
         else console.log("Failed to update note");
         getNotes();
         setEditId(null);
+        setAttachId(null);
+        setEditedTitle("");
+        setEditedContent("");
+        setSelectedExpense(null);
       })
       .catch((err) => console.log(err));
   };
@@ -120,6 +149,25 @@ const Home = () => {
             value={newContent}
           />
 
+          <label htmlFor="content">Attach Expense:</label>
+          <select
+            className="py-2 px-2 border border-pink-300 bg-transparent rounded-md dark:text-white"
+            onChange={(e) => {
+              const expenseId = parseInt(e.target.value);
+              setSelectedExpense(expenseId);
+            }}
+            defaultValue="Select expense"
+          >
+            <option value="Select expense" disabled hidden>
+              Select expense
+            </option>
+            {expenses.map((expense) => (
+              <option key={expense.id} value={expense.id}>
+                {expense.content}
+              </option>
+            ))}
+          </select>
+
           <input
             className="border border-pink-300 bg-pink-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-pink-500 transition-all duration-300"
             type="submit"
@@ -127,13 +175,13 @@ const Home = () => {
           />
         </form>
         <hr className="my-5" />
-        <div className="flex flex-col gap-10 max-w-screen-sm mx-auto">
+        <div className="flex flex-col gap-10 max-w-screen-sm mx-auto max-h-[700px] overflow-auto py-2 px-3">
           {notes.map((note) => (
             <div
               key={note.id}
               className="border-2 border-dotted border-pink-400 rounded-lg py-5 px-3 flex flex-col gap-5"
             >
-              <section className="max-w-xl mx-auto flex flex-col gap-2">
+              <section className="w-2/3 mx-auto flex flex-col gap-2 ">
                 <section className="flex flex-row align-middle justify-between">
                   <h3 className="text-xl font-bold">Title:</h3>
                   {editId !== note.id ? (
@@ -169,11 +217,71 @@ const Home = () => {
                     />
                   )}
                 </section>
+                <section>
+                  {note.expense_detail && (
+                    <section className="group border-2 border-dotted border-green-400 rounded-lg py-3 px-3 hover:bg-green-300/10 transition-all duration-300 h-14 hover:h-24 overflow-clip">
+                      <p className="py-1 px-2 font-bold italic">
+                        Expense: {note.expense_detail.content}
+                      </p>
+                      <p className="py-1 px-2 font-bold italic invisible group-hover:visible transition-ease-in duration-300">
+                        Price: {note.expense_detail.amount}
+                      </p>
+                    </section>
+                  )}
+                </section>
               </section>
-              <section>Author of the note: {note.author.username}</section>
+              <section className="text-xs">
+                Author of the note:{" "}
+                <span className="font-bold italic">{note.author.username}</span>
+              </section>
               <section className="w-full flex align-middle justify-end gap-2">
                 {editId !== note.id ? (
                   <>
+                    {attachId !== note.id ? (
+                      !note.expense_detail && (
+                        <button
+                          className="border border-green-300 bg-green-500 py-2 px-5 min-w-32 text-white rounded-md hover:bg-transparent hover:text-green-500 transition-all duration-300"
+                          onClick={() => startAttachExpense(note)}
+                        >
+                          Attach Expense
+                        </button>
+                      )
+                    ) : (
+                      <>
+                        <select
+                          className="py-2 px-2 w-full border border-pink-300 bg-transparent rounded-md dark:text-white"
+                          onChange={(e) => {
+                            const expenseId = parseInt(e.target.value);
+                            setSelectedExpense(expenseId);
+                            setEditedTitle(note.title);
+                            setEditedContent(note.content);
+                          }}
+                          defaultValue="Select expense"
+                        >
+                          <option value="Select expense" disabled hidden>
+                            Select expense
+                          </option>
+                          {expenses.map((expense) => (
+                            <option key={expense.id} value={expense.id}>
+                              {expense.content}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          className="border border-red-300 bg-red-500 py-2 px-5 text-white rounded-md hover:bg-red-500/20 hover:text-red-500 transition-all duration-300"
+                          onClick={() => applyEditNote(note.id)}
+                        >
+                          +
+                        </button>
+
+                        <button
+                          className="border border-red-300 bg-red-500 py-2 px-5 text-white rounded-md hover:bg-red-500/20 hover:text-red-500 transition-all duration-300"
+                          onClick={() => setAttachId(null)}
+                        >
+                          X
+                        </button>
+                      </>
+                    )}
                     <button
                       className="border border-pink-300 bg-pink-500 py-2 px-5 min-w-32 text-white rounded-md hover:bg-transparent hover:text-pink-500 transition-all duration-300"
                       onClick={() => startEditNote(note)}
