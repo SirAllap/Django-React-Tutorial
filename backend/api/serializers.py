@@ -15,7 +15,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "email",
             "username",
             "password",
-        )  # Add password field for creation
+        )
 
     def create(self, validated_data):
         # Hash the password and create the user
@@ -27,15 +27,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 
-class NoteSerializer(serializers.ModelSerializer):
-    author = CustomUserSerializer(read_only=True)
-
-    class Meta:
-        model = Note
-        fields = ("id", "title", "content", "created_at", "author")
-        extra_kwargs = {"author": {"read_only": True}}
-
-
 class ExpenseSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
 
@@ -43,3 +34,29 @@ class ExpenseSerializer(serializers.ModelSerializer):
         model = Expense
         fields = ("id", "amount", "content", "created_at", "author")
         extra_kwargs = {"author": {"read_only": True}}
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    author = CustomUserSerializer(read_only=True)
+    expense = serializers.PrimaryKeyRelatedField(
+        queryset=Expense.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    expense_detail = ExpenseSerializer(source="expense", read_only=True)
+
+    class Meta:
+        model = Note
+        fields = (
+            "id",
+            "title",
+            "content",
+            "created_at",
+            "author",
+            "expense",
+            "expense_detail",
+        )
+        extra_kwargs = {
+            "author": {"read_only": True},
+        }
