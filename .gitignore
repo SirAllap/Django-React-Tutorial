@@ -253,3 +253,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 backend/api/migrations/*
+bun.lockb
+frontend/bun.lockb
