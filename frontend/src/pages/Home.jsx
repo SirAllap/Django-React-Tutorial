@@ -1,63 +1,63 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react"
-import api from "../api"
-import { ToggleScreenMode } from "../components/ToggleScreenMode"
-import { LogoutButton } from "../components/LogoutButton"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react";
+import api from "../api";
+import { ToggleScreenMode } from "../components/ToggleScreenMode";
+import { LogoutButton } from "../components/LogoutButton";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const [notes, setNotes] = useState([])
-  const [editId, setEditId] = useState(null)
-  const [editedTitle, setEditedTitle] = useState("")
-  const [editedContent, setEditedContent] = useState("")
-  const [newTitle, setNewTitle] = useState("")
-  const [newContent, setNewContent] = useState("")
-  const navigate = useNavigate()
+  const [notes, setNotes] = useState([]);
+  const [editId, setEditId] = useState(null);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedContent, setEditedContent] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getNotes()
-  }, [])
+    getNotes();
+  }, []);
 
   const getNotes = () => {
     api
       .get("/api/notes/")
       .then((res) => res.data)
       .then((data) => {
-        setNotes(data)
+        setNotes(data);
       })
-      .catch((err) => alert(err))
-  }
+      .catch((err) => console.log(err));
+  };
 
   const deleteNote = (id) => {
     api
       .delete(`/api/notes/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Note deleted")
-        else alert("Failed to delete note")
-        getNotes()
+        if (res.status === 204) console.log("Note deleted");
+        else console.log("Failed to delete note");
+        getNotes();
       })
-      .catch((err) => alert(err))
-  }
+      .catch((err) => console.log(err));
+  };
 
   const createNote = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     api
       .post("/api/notes/", { content: newContent, title: newTitle })
       .then((res) => {
-        if (res.status === 201) alert("Note created")
-        else alert("Failed to make note")
-        getNotes()
-        setNewTitle("")
-        setNewContent("")
+        if (res.status === 201) console.log("Note created");
+        else console.log("Failed to make note");
+        getNotes();
+        setNewTitle("");
+        setNewContent("");
       })
-      .catch((err) => alert(err))
-  }
+      .catch((err) => console.log(err));
+  };
 
   const startEditNote = (note) => {
-    setEditId(note.id)
-    setEditedTitle(note.title)
-    setEditedContent(note.content)
-  }
+    setEditId(note.id);
+    setEditedTitle(note.title);
+    setEditedContent(note.content);
+  };
 
   const applyEditNote = (id) => {
     api
@@ -66,22 +66,25 @@ const Home = () => {
         content: editedContent,
       })
       .then((res) => {
-        if (res.status === 200) alert("Note updated")
-        else alert("Failed to update note")
-        getNotes()
-        setEditId(null)
+        if (res.status === 200) console.log("Note updated");
+        else console.log("Failed to update note");
+        getNotes();
+        setEditId(null);
       })
-      .catch((err) => alert(err))
-  }
+      .catch((err) => console.log(err));
+  };
 
   const cancelEdit = () => {
-    setEditId(null)
-  }
+    setEditId(null);
+  };
 
   return (
-    <div className="max-w-screen-xl mx-auto py-5 px-5">
+    <div className="max-w-screen-xl mx-auto py-5 px-5 h-svh">
       <section className="max-w-screen-xl flex flex-row justify-end gap-5">
-        <button className='border border-yellow-300 bg-yellow-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-yellow-500 transition-all duration-300' onClick={() => navigate("/expenses")}>
+        <button
+          className="border border-yellow-300 bg-yellow-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-yellow-500 transition-all duration-300"
+          onClick={() => navigate("/expenses")}
+        >
           Add expenses
         </button>
         <ToggleScreenMode />
@@ -98,7 +101,7 @@ const Home = () => {
         >
           <label htmlFor="title">Title:</label>
           <input
-            className="py-2 px-2 border border-indigo-300 bg-indigo-100 rounded-md dark:text-gray-800"
+            className="py-2 px-2 border border-pink-300 bg-transparent rounded-md dark:text-white"
             type="text"
             id="title"
             name="title"
@@ -109,7 +112,7 @@ const Home = () => {
 
           <label htmlFor="content">Content:</label>
           <textarea
-            className="py-2 px-2 border border-indigo-300 bg-indigo-100 rounded-md dark:text-gray-800"
+            className="py-2 px-2 border border-pink-300 bg-transparent rounded-md dark:text-white"
             id="content"
             name="content"
             required
@@ -118,7 +121,7 @@ const Home = () => {
           />
 
           <input
-            className="border border-indigo-300 bg-indigo-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-indigo-500 transition-all duration-300"
+            className="border border-pink-300 bg-pink-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-pink-500 transition-all duration-300"
             type="submit"
             value="Submit"
           />
@@ -128,7 +131,7 @@ const Home = () => {
           {notes.map((note) => (
             <div
               key={note.id}
-              className="border-2 border-dotted border-indigo-400 rounded-lg py-5 px-3 flex flex-col gap-5"
+              className="border-2 border-dotted border-pink-400 rounded-lg py-5 px-3 flex flex-col gap-5"
             >
               <section className="max-w-xl mx-auto flex flex-col gap-2">
                 <section className="flex flex-row align-middle justify-between">
@@ -139,7 +142,7 @@ const Home = () => {
                     </span>
                   ) : (
                     <input
-                      className="ml-2 py-1 px-2 w-full border border-indigo-300/40 bg-transparent rounded-md"
+                      className="ml-2 py-1 px-2 w-full border border-pink-300/40 bg-transparent rounded-md"
                       type="text"
                       id="title"
                       name="title"
@@ -157,7 +160,7 @@ const Home = () => {
                     </span>
                   ) : (
                     <textarea
-                      className="ml-2 py-1 px-2 w-full border border-indigo-300/40 bg-transparent rounded-md"
+                      className="ml-2 py-1 px-2 w-full border border-pink-300/40 bg-transparent rounded-md"
                       id="content"
                       name="content"
                       required
@@ -172,7 +175,7 @@ const Home = () => {
                 {editId !== note.id ? (
                   <>
                     <button
-                      className="border border-indigo-300 bg-indigo-500 py-2 px-5 min-w-32 text-white rounded-md hover:bg-transparent hover:text-indigo-500 transition-all duration-300"
+                      className="border border-pink-300 bg-pink-500 py-2 px-5 min-w-32 text-white rounded-md hover:bg-transparent hover:text-pink-500 transition-all duration-300"
                       onClick={() => startEditNote(note)}
                     >
                       Edit
@@ -206,7 +209,7 @@ const Home = () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
