@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Note
+from .models import CustomUser, Note, Expense
 
 
 class CustomUserAdmin(UserAdmin):
@@ -41,3 +41,6 @@ admin.site.register(CustomUser, CustomUserAdmin)
 
 # Register Note model as well
 admin.site.register(Note)
+
+# Resgiter Expense model as well
+admin.site.register(Expense)
