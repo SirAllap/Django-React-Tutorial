@@ -9,11 +9,11 @@ export const ToggleScreenMode = () => {
     if (currentTheme === "dark") {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
-      setIsDarkMode(true);
+      setIsDarkMode(false);
     } else {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
-      setIsDarkMode(false);
+      setIsDarkMode(true);
     }
   };
 
@@ -28,7 +28,7 @@ export const ToggleScreenMode = () => {
 
   return (
     <button
-      className="border border-indigo-300 bg-indigo-500 py-2 px-5 text-white rounded-md hover:bg-transparent hover:text-indigo-500 transition-all duration-300"
+      className={`border py-2 px-5 rounded-md transition-all duration-300 ${isDarkMode ? "bg-white text-[#484848] hover:bg-[#484848] hover:text-white" : "bg-[#484848] text-white hover:bg-white hover:text-[#484848]"}`}
       onClick={handleToggleMode}
     >
       Change Mode to {isDarkMode ? "Light" : "Dark"}
