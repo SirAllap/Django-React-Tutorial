@@ -73,6 +73,13 @@ class Note(models.Model):
         related_name="notes",
         null=True,
     )
+    expense = models.ForeignKey(
+        "Expense",
+        on_delete=models.CASCADE,
+        related_name="notes",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.title
