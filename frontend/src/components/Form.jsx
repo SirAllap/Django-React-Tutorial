@@ -59,109 +59,114 @@ const Form = ({ route, method }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h1>{name}</h1>
-      {emailError && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 my-2 ml-2 px-2 py-2 rounded-md relative w-full"
-          role="alert"
-        >
-          <strong className="font-bold mr-10">{emailError}</strong>
-          <span
-            className="absolute top-0 bottom-0 right-0 px-2 py-2"
-            onClick={() => setEmailError(null)}
+    <section className="flex justify-center items-center min-h-screen">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full form-container border-2 text-[#575757] dark:text-white "
+      >
+        <h1 className="font-extrabold text-xl py-5">{name}</h1>
+        {emailError && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 my-2 ml-2 px-2 py-2 rounded-md relative w-full"
+            role="alert"
           >
-            <svg
-              className="fill-current h-6 w-6 text-red-500"
-              role="button"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
+            <strong className="font-bold mr-10">{emailError}</strong>
+            <span
+              className="absolute top-0 bottom-0 right-0 px-2 py-2"
+              onClick={() => setEmailError(null)}
             >
-              <title>Close</title>
-              <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-            </svg>
-          </span>
-        </div>
-      )}
+              <svg
+                className="fill-current h-6 w-6 text-red-500"
+                role="button"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <title>Close</title>
+                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+              </svg>
+            </span>
+          </div>
+        )}
 
-      <input
-        className="my-2 ml-2 px-2 py-2 w-full border border-indigo-300/40 bg-white rounded-md text-indigo-900 error"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      {method !== "login" && (
         <input
-          className="my-2 ml-2 px-2 py-2 w-full border border-indigo-300/40 bg-white rounded-md text-indigo-900"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
+          className="my-2 ml-2 px-2 py-2 w-full border border-indigo-300/40 bg-transparent rounded-md text-[#474747] dark:text-white error"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
           required
         />
-      )}
-
-      {passwordError && (
-        <div
-          className="bg-red-100 border border-red-400 text-red-700 my-2 ml-2 px-2 py-2 rounded-md relative w-full"
-          role="alert"
-        >
-          <strong className="font-bold mr-10">{passwordError}</strong>
-          <span
-            className="absolute top-0 bottom-0 right-0 px-2 py-2"
-            onClick={() => setPasswordError(null)}
-          >
-            <svg
-              className="fill-current h-6 w-6 text-red-500"
-              role="button"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-            >
-              <title>Close</title>
-              <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-            </svg>
-          </span>
-        </div>
-      )}
-      <input
-        className="my-2 ml-2 px-2 py-2 w-full border border-indigo-300/40 bg-white rounded-md text-indigo-900"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-
-      <p className="my-2">
-        {method === "login"
-          ? "Haven't registered yet? "
-          : "Already registered? "}
-        {method === "login" ? (
-          <span
-            className="text-indigo-500 font-bold cursor-pointer hover:text-indigo-600"
-            onClick={() => navigate("/register")}
-          >
-            Register
-          </span>
-        ) : (
-          <span
-            className="text-indigo-500 font-bold cursor-pointer hover:text-indigo-600"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </span>
+        {method !== "login" && (
+          <input
+            className="my-2 ml-2 px-2 py-2 w-full border border-indigo-300/40 bg-transparent rounded-md text-[#474747] dark:text-white"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+            required
+          />
         )}
-      </p>
-      <button
-        className="border border-indigo-300 bg-indigo-500 py-2 px-5 min-w-full text-white rounded-md hover:bg-transparent hover:text-indigo-500 transition-all duration-300"
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : name}
-      </button>
-    </form>
+
+        {passwordError && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 my-2 ml-2 px-2 py-2 rounded-md relative w-full"
+            role="alert"
+          >
+            <strong className="font-bold mr-10">{passwordError}</strong>
+            <span
+              className="absolute top-0 bottom-0 right-0 px-2 py-2"
+              onClick={() => setPasswordError(null)}
+            >
+              <svg
+                className="fill-current h-6 w-6 text-red-500"
+                role="button"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <title>Close</title>
+                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+              </svg>
+            </span>
+          </div>
+        )}
+        <input
+          className="my-2 ml-2 px-2 py-2 w-full border border-indigo-300/40 bg-transparent rounded-md text-[#474747] dark:text-white"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+
+        <p className="my-8">
+          {method === "login"
+            ? "Haven't registered yet? "
+            : "Already registered? "}
+          {method === "login" ? (
+            <span
+              className="text-indigo-500 font-bold cursor-pointer hover:text-indigo-600"
+              onClick={() => navigate("/register")}
+            >
+              Register
+            </span>
+          ) : (
+            <span
+              className="text-indigo-500 font-bold cursor-pointer hover:text-indigo-600"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </span>
+          )}
+        </p>
+        <button
+          className="border border-indigo-300 bg-indigo-500 py-2 px-5 min-w-full text-white rounded-md hover:bg-transparent hover:text-indigo-500 transition-all duration-300"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : name}
+        </button>
+      </form>
+    </section>
   );
 };
 
