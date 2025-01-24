@@ -38,13 +38,14 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
-    expense = serializers.PrimaryKeyRelatedField(
+    expenses = serializers.PrimaryKeyRelatedField(
         queryset=Expense.objects.all(),
         write_only=True,
         required=False,
         allow_null=True,
+        many=True,
     )
-    expense_detail = ExpenseSerializer(source="expense", read_only=True)
+    expenses_detail = ExpenseSerializer(source="expenses", read_only=True, many=True)
 
     class Meta:
         model = Note
@@ -54,8 +55,8 @@ class NoteSerializer(serializers.ModelSerializer):
             "content",
             "created_at",
             "author",
-            "expense",
-            "expense_detail",
+            "expenses",
+            "expenses_detail",
         )
         extra_kwargs = {
             "author": {"read_only": True},
