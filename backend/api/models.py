@@ -73,11 +73,9 @@ class Note(models.Model):
         related_name="notes",
         null=True,
     )
-    expense = models.ForeignKey(
+    expenses = models.ManyToManyField(
         "Expense",
-        on_delete=models.CASCADE,
         related_name="notes",
-        null=True,
         blank=True,
     )
 
