@@ -1,111 +1,125 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
-import api from "../api";
-import { ToggleScreenMode } from "../components/ToggleScreenMode";
-import { LogoutButton } from "../components/LogoutButton";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react"
+import api from "../api"
+import { ToggleScreenMode } from "../components/ToggleScreenMode"
+import { LogoutButton } from "../components/LogoutButton"
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
-  const [notes, setNotes] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [editedTitle, setEditedTitle] = useState("");
-  const [editedContent, setEditedContent] = useState("");
-  const [newTitle, setNewTitle] = useState("");
-  const [newContent, setNewContent] = useState("");
-  const [selectedExpense, setSelectedExpense] = useState(null);
-  const [attachId, setAttachId] = useState(null);
-  const navigate = useNavigate();
+  const [notes, setNotes] = useState([])
+  const [expenses, setExpenses] = useState([])
+  const [editId, setEditId] = useState(null)
+  const [editedTitle, setEditedTitle] = useState("")
+  const [editedContent, setEditedContent] = useState("")
+  const [newTitle, setNewTitle] = useState("")
+  const [newContent, setNewContent] = useState("")
+  const [selectedExpenses, setSelectedExpenses] = useState([])
+  const [attachId, setAttachId] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    getNotes();
-    getExpenses();
-  }, []);
+    getNotes()
+    getExpenses()
+  }, [])
 
   const getNotes = () => {
     api
       .get("/api/notes/")
       .then((res) => res.data)
       .then((data) => {
-        setNotes(data);
+        setNotes(data)
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   const getExpenses = () => {
     api
       .get("/api/expenses/")
       .then((res) => res.data)
       .then((data) => {
-        setExpenses(data);
+        setExpenses(data)
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   const deleteNote = (id) => {
     api
       .delete(`/api/notes/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) console.log("Note deleted");
-        else console.log("Failed to delete note");
-        getNotes();
+        if (res.status === 204) console.log("Note deleted")
+        else console.log("Failed to delete note")
+        getNotes()
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   const createNote = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     api
       .post("/api/notes/", {
         content: newContent,
         title: newTitle,
-        expense: selectedExpense,
+        expenses: selectedExpenses,
       })
       .then((res) => {
-        if (res.status === 201) console.log("Note created");
-        else console.log("Failed to make note");
-        getNotes();
-        setNewTitle("");
-        setNewContent("");
-        setSelectedExpense(null);
+        if (res.status === 201) console.log("Note created")
+        else console.log("Failed to make note")
+        getNotes()
+        setNewTitle("")
+        setNewContent("")
+        setSelectedExpenses([])
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   const startEditNote = (note) => {
-    setEditId(note.id);
-    setEditedTitle(note.title);
-    setEditedContent(note.content);
-  };
+    setEditId(note.id)
+    setEditedTitle(note.title)
+    setEditedContent(note.content)
+    setSelectedExpenses(note.expenses_detail.map(expense => expense.id))
+  }
 
   const startAttachExpense = (note) => {
-    setAttachId(note.id);
-  };
+    setAttachId(note.id)
+  }
 
   const applyEditNote = (id) => {
     api
       .put(`/api/notes/update/${id}/`, {
         title: editedTitle,
         content: editedContent,
-        expense: selectedExpense,
+        expenses: selectedExpenses,
       })
       .then((res) => {
-        console.log(res.data);
-        if (res.status === 200) console.log("Note updated");
-        else console.log("Failed to update note");
-        getNotes();
-        setEditId(null);
-        setAttachId(null);
-        setEditedTitle("");
-        setEditedContent("");
-        setSelectedExpense(null);
+        console.log(res.data)
+        if (res.status === 200) console.log("Note updated")
+        else console.log("Failed to update note")
+        getNotes()
+        setEditId(null)
+        setAttachId(null)
+        setEditedTitle("")
+        setEditedContent("")
+        setSelectedExpenses([])
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   const cancelEdit = () => {
-    setEditId(null);
-  };
+    setEditId(null)
+    setAttachId(null)
+    setSelectedExpenses([])
+  }
+
+  const handleExpenseChange = (e) => {
+    const options = e.target.options
+    const selected = []
+    for (let i = 0;i < options.length;i++) {
+      if (options[i].selected) {
+        selected.push(parseInt(options[i].value))
+      }
+    }
+    setSelectedExpenses(selected)
+  }
 
   return (
     <div className="max-w-screen-xl mx-auto py-5 px-5 h-svh">
@@ -149,18 +163,13 @@ const Home = () => {
             value={newContent}
           />
 
-          <label htmlFor="content">Attach Expense:</label>
+          <label htmlFor="content">Attach Expenses:</label>
           <select
             className="py-2 px-2 border border-pink-300 bg-transparent rounded-md dark:text-white"
-            onChange={(e) => {
-              const expenseId = parseInt(e.target.value);
-              setSelectedExpense(expenseId);
-            }}
-            defaultValue="Select expense"
+            multiple
+            onChange={handleExpenseChange}
+            value={selectedExpenses}
           >
-            <option value="Select expense" disabled hidden>
-              Select expense
-            </option>
             {expenses.map((expense) => (
               <option key={expense.id} value={expense.id}>
                 {expense.content}
@@ -217,17 +226,17 @@ const Home = () => {
                     />
                   )}
                 </section>
-                <section>
-                  {note.expense_detail && (
-                    <section className="group border-2 border-dotted border-green-400 rounded-lg py-3 px-3 hover:bg-green-300/10 transition-all duration-300 h-14 hover:h-24 overflow-clip">
+                <section className="flex flex-col gap-2">
+                  {note.expenses_detail && note.expenses_detail.map((expense) => (
+                    <section key={expense.id} className="group border-2 border-dotted border-green-400 rounded-lg py-3 px-3 hover:bg-green-300/10 transition-all duration-300 h-14 hover:h-24 overflow-clip">
                       <p className="py-1 px-2 font-bold italic">
-                        Expense: {note.expense_detail.content}
+                        Expense: {expense.content}
                       </p>
                       <p className="py-1 px-2 font-bold italic invisible group-hover:visible transition-ease-in duration-300">
-                        Price: {note.expense_detail.amount}
+                        Price: {expense.amount}
                       </p>
                     </section>
-                  )}
+                  ))}
                 </section>
               </section>
               <section className="text-xs">
@@ -238,7 +247,7 @@ const Home = () => {
                 {editId !== note.id ? (
                   <>
                     {attachId !== note.id ? (
-                      !note.expense_detail && (
+                      !note.expenses_detail && (
                         <button
                           className="border border-green-300 bg-green-500 py-2 px-5 min-w-32 text-white rounded-md hover:bg-transparent hover:text-green-500 transition-all duration-300"
                           onClick={() => startAttachExpense(note)}
@@ -250,17 +259,10 @@ const Home = () => {
                       <>
                         <select
                           className="py-2 px-2 w-full border border-pink-300 bg-transparent rounded-md dark:text-white"
-                          onChange={(e) => {
-                            const expenseId = parseInt(e.target.value);
-                            setSelectedExpense(expenseId);
-                            setEditedTitle(note.title);
-                            setEditedContent(note.content);
-                          }}
-                          defaultValue="Select expense"
+                          multiple
+                          onChange={handleExpenseChange}
+                          value={selectedExpenses}
                         >
-                          <option value="Select expense" disabled hidden>
-                            Select expense
-                          </option>
                           {expenses.map((expense) => (
                             <option key={expense.id} value={expense.id}>
                               {expense.content}
@@ -317,7 +319,7 @@ const Home = () => {
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
