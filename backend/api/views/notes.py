@@ -14,7 +14,11 @@ class NoteListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         if serializer.is_valid():
-            serializer.save(author=self.request.user)
+            note = serializer.save(author=self.request.user)
+            expenses = self.request.data.get('expenses')
+            if expenses:
+                note.expenses.set(expenses)
+            note.save()
         else:
             print(serializer.errors)
 
@@ -35,3 +39,13 @@ class NoteUpdate(generics.UpdateAPIView):
     def get_queryset(self):
         user = self.request.user
         return Note.objects.filter(author=user)
+
+    def perform_update(self, serializer):
+        if serializer.is_valid():
+            note = serializer.save()
+            expenses = self.request.data.get('expenses')
+            if expenses:
+                note.expenses.set(expenses)
+            note.save()
+        else:
+            print(serializer.errors)
